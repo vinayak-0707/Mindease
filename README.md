@@ -1,193 +1,178 @@
-# 🌿 MindEase 
+# 🌿 MindEase — Digital Mental Health and Psychological Support System
 
-This is the backend (server) for the MindEase project.  
-It is a **REST API** built with **Node.js + Express** and a **PostgreSQL** database.
+> A quiet place for college students to talk, write, and breathe.
 
----
-
-## 📁 Folder Structure
-
-```
-mindease-backend/
-│
-├── server.js              ← Entry point. Start the server from here.
-├── package.json           ← Lists all packages the project needs.
-├── .env.example           ← Template for secret settings (copy to .env)
-│
-├── db/
-│   ├── pool.js            ← PostgreSQL connection (used by all routes)
-│   └── schema.sql         ← Creates all the database tables (run once)
-│
-├── middleware/
-│   └── auth.js            ← Checks login token before protected routes
-│
-└── routes/
-    ├── auth.js            ← POST /api/auth/register  and  /login
-    ├── tickets.js         ← Support ticket endpoints
-    ├── diary.js           ← Private diary endpoints
-    ├── profile.js         ← Student / counsellor profile endpoints
-    └── quiz.js            ← Wellness quiz results
-```
+**Mini Project 2026-27 · CSEMPID072**  
+Department of Computer Science and Engineering, ABES Institute of Technology, Ghaziabad  
+**Team:** Srijan Diwan, Vinayak Pandey, Vibhu Varma, Yash Prakash Singh  
+**Supervisor:** Prof. Satyendra Singh  
+**Hackathon:** Smart India Hackathon 2025 — Problem Statement SIH25092
 
 ---
 
-## 🛠 Step-by-Step Setup
+## Table of Contents
 
-### Step 1 — Install Node.js
-Download from https://nodejs.org (choose the LTS version).  
-After installing, open a terminal and check:
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [User Roles](#user-roles)
+- [Wellness Quizzes](#wellness-quizzes)
+- [Backend API](#backend-api)
+- [SDG Alignment](#sdg-alignment)
+- [Team](#team)
+
+---
+
+## About the Project
+
+MindEase is a browser-based mental health and psychological support platform built for students in higher education. It connects students with the right counsellor in their institution, lets them keep a private digital diary, and provides calm-sound tools, wellness screenings, and an emergency SOS helpline — all with the option to stay completely anonymous.
+
+---
+
+## Features
+
+| Feature | Description |
+|---|---|
+| **Support Tickets** | Students raise a ticket by describing their concern. It is routed automatically to a counsellor specialised in that category (academic, clinical, relationship, etc.) and can be submitted anonymously. |
+| **Digital Diary** | Private journal with mood tagging. A weekly mood chart shows trends over the last seven days. Only the student can see their diary. |
+| **Wellness Check** | Standard PHQ-2 (depression screening) and GAD-7 (anxiety screening) questionnaires, plus short stress/burnout and loneliness checks, with automatic interpretation and ticket pre-fill. |
+| **Chat Companion** | Scripted, keyword-aware chat widget offering coping tips and resource pointers. Crisis messages (e.g. suicidal ideation) are detected and an urgent-support message is shown immediately. |
+| **Calm Ambient Sound** | In-browser synthesised pink noise with low-frequency drone, generated via the Web Audio API — no audio files needed. |
+| **Emergency SOS** | One-tap access to Tele-MANAS 14416 and emergency number 112, plus an in-page breathing guide and the option to instantly alert the student's counsellor. |
+| **Relaxation Section** | Book, movie, and game recommendations personalised to the student's latest diary mood. |
+| **Image Space** | Private photo gallery (stored on device); images are compressed in-browser before saving. |
+| **Counsellor Dashboard** | Counsellors see only the tickets that match their specialisation and tier level. Urgent (level-3) tickets are also visible to professional counsellors as a safety net. |
+| **Analog / Digital Clock** | Toggleable live clock widget on the student dashboard. |
+
+---
+
+## Tech Stack
+
+- **Frontend:** Vanilla HTML5, CSS3 (custom properties, grid, flexbox), vanilla JavaScript (ES2020+)
+- **Fonts:** Figtree and Outfit via Google Fonts
+- **Audio:** Web Audio API (no external files)
+- **Backend (connected):** Node.js REST API at `http://localhost:3000/api` (JWT-based auth)
+- **Storage (demo / offline):** `localStorage` for session, tickets, diary entries, images, quiz history, and preferences
+- **No external UI framework or build tool required** — open `index.html` directly in a browser for the demo
+
+---
+
+## Getting Started
+
+### Demo (no backend)
+
 ```
-node --version     ← should show v18 or higher
-npm --version
+1. Clone or download the repository.
+2. Open index.html in any modern browser.
+3. Click "Get started" or "Log in".
+4. Enter any email — if it is not yet registered, an account is created automatically.
+5. Choose Student or Counsellor and complete the profile form.
 ```
 
-### Step 2 — Install PostgreSQL
-Download from https://www.postgresql.org/download/  
-During setup, remember the **postgres password** you set — you will need it.  
+All data is stored in the browser's `localStorage`. Use **Clear all demo data** in the Profile page to reset.
 
-After installing, open **pgAdmin** (comes with PostgreSQL) or the `psql` terminal.
+### With the Backend
 
-### Step 3 — Create the Database
-In pgAdmin → right-click "Databases" → Create → Database → name it `mindease`.  
-
-Or in `psql`:
-```sql
-CREATE DATABASE mindease;
-```
-
-### Step 4 — Create the Tables
-Open `db/schema.sql` in pgAdmin's Query Tool and click ▶ Run.  
-Or in your terminal:
-```
-psql -U postgres -d mindease -f db/schema.sql
-```
-
-### Step 5 — Install Project Packages
-In your terminal, go into this folder and run:
-```
+```bash
+# 1. Start the API server (Node.js, port 3000)
+cd backend
 npm install
-```
-This downloads all packages listed in `package.json` (express, pg, jwt, etc.)
+npm start
 
-### Step 6 — Create Your .env File
-Copy the example file:
-```
-cp .env.example .env
-```
-Open `.env` and fill in:
-- `DATABASE_URL` — your Postgres connection string  
-  e.g. `postgresql://postgres:yourpassword@localhost:5432/mindease`
-- `JWT_SECRET` — any long random string, e.g. run this once:  
-  ```
-  node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-  ```
-  Paste the output as your JWT_SECRET.
-
-### Step 7 — Start the Server
-```
-npm run dev        ← restarts automatically when you change files (uses nodemon)
-```
-or
-```
-node server.js
+# 2. Open index.html in your browser
+#    Login and registration are handled via /api/auth/login and /api/auth/register
 ```
 
-Open http://localhost:3000 in your browser.  
-You should see: `{ "message": "🌿 MindEase API is running!" }`  
-✅ Your backend is working!
+The API base URL is set at the top of `script.js`:
+
+```js
+const API = 'http://localhost:3000/api';
+```
+
+Change this to your deployed server URL for production.
 
 ---
 
-## 📡 API Endpoints Reference
+## Project Structure
 
-All protected endpoints need a `Authorization: Bearer <token>` header.  
-You get the token when you log in or register.
-
-### Auth (no login needed)
-| Method | URL | What it does |
-|--------|-----|-------------|
-| POST | `/api/auth/register` | Sign up: `{ email, password, role }` |
-| POST | `/api/auth/login` | Log in: `{ email, password }` |
-
-### Tickets (login required)
-| Method | URL | Who |
-|--------|-----|-----|
-| GET | `/api/tickets/mine` | Student — get my tickets |
-| GET | `/api/tickets/assigned` | Counsellor — get tickets for my sections |
-| POST | `/api/tickets` | Student — create ticket |
-| PATCH | `/api/tickets/:id/pin` | Anyone — toggle pin |
-| DELETE | `/api/tickets/:id` | Anyone — soft delete |
-| PATCH | `/api/tickets/:id/reply` | Counsellor — reply & resolve |
-
-### Diary (login required)
-| Method | URL | What it does |
-|--------|-----|-------------|
-| GET | `/api/diary` | Get all my entries |
-| POST | `/api/diary` | Save new entry: `{ title, mood, content }` |
-| PATCH | `/api/diary/:id/pin` | Toggle pin |
-| DELETE | `/api/diary/:id` | Delete entry |
-
-### Profile (login required)
-| Method | URL | What it does |
-|--------|-----|-------------|
-| GET | `/api/profile` | Get my profile |
-| POST | `/api/profile` | Save profile (different fields for student/counsellor) |
-
-### Quiz (login required)
-| Method | URL | What it does |
-|--------|-----|-------------|
-| GET | `/api/quiz` | Get my past quiz scores |
-| POST | `/api/quiz` | Save quiz result: `{ quiz_key, score }` |
-
----
-
-## 🚀 Deploy to Render (Free Hosting)
-
-1. Push your code to GitHub.
-2. Go to https://render.com → New → Web Service → connect your repo.
-3. Set **Start Command** to `node server.js`.
-4. Add your environment variables (DATABASE_URL, JWT_SECRET, NODE_ENV=production) under "Environment".
-5. Render also offers a free PostgreSQL database — create one and copy its connection string.
-6. Done! Render gives you a live URL like `https://mindease-api.onrender.com`.
-
----
-
-## 🔗 Connecting Your Frontend
-
-In your `script.js`, replace the `localStorage` calls with `fetch()` calls to this API.  
-Example — creating a ticket:
-
-```javascript
-const token = localStorage.getItem('mindease_token'); // save this after login
-
-const res = await fetch('http://localhost:3000/api/tickets', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + token
-  },
-  body: JSON.stringify({
-    category: 'Academics',
-    sub_category: 'Exam stress',
-    field: 'acad',
-    message: 'I cannot sleep before exams...',
-    anon: true,
-    urgent: false
-  })
-});
-
-const data = await res.json();
-console.log(data); // { ticket: {...}, escalated: false }
+```
+mindease/
+├── index.html      # Single-page app shell and landing page markup
+├── style.css       # All styles — light/dark theme, responsive layout, components
+├── script.js       # All app logic — routing, views, data, audio, API calls
+└── README.md
 ```
 
+MindEase is a single-page application (SPA) rendered entirely by JavaScript. The `render()` function in `script.js` redraws the `#app` div on every state change. There is no framework or bundler.
+
 ---
 
-## ❓ Common Problems
+## User Roles
 
-| Problem | Fix |
-|---------|-----|
-| `ECONNREFUSED` when starting | PostgreSQL is not running. Start it from pgAdmin or Services. |
-| `password authentication failed` | Wrong password in DATABASE_URL in .env |
-| `Cannot find module` | Run `npm install` again |
-| Port 3000 already in use | Change `PORT=3001` in .env |
-| `JsonWebTokenError` | Make sure JWT_SECRET is set in .env |
+### Student
+
+- Registers with an email and password.
+- Fills in a profile (age, gender, occupation, stream, institution, language).
+- Can raise support tickets (anonymous or named), write diary entries, take wellness quizzes, chat with the companion, and browse the relaxation section.
+
+### Counsellor
+
+- Registers and selects their specialisation sections (Clinical, Academic, Relationship, Family, General) and tier level (1 Student Volunteer / 2 Peer Counsellor / 3 Professional Counsellor).
+- Sees only the tickets that match their sections **and** are at or below their tier level.
+- Level-3 (urgent / severe) tickets are always visible to professional counsellors regardless of section.
+- Can reply to a ticket and mark it resolved.
+
+---
+
+## Wellness Quizzes
+
+| Quiz | Standard | Items | Interpretation |
+|---|---|---|---|
+| Mood | PHQ-2 | 2 | Score ≥ 3 → positive screen for depression |
+| Anxiety | GAD-7 | 7 | 0–4 Minimal, 5–9 Mild, 10–14 Moderate, 15+ Severe |
+| Stress & Burnout | Short check | 4 | 0–6 Low/Mild, 7–9 Moderate, 10–12 High |
+| Loneliness | Short check | 3 | 0–4 Low/Mild, 5–7 Moderate, 8–9 High |
+
+After completing a quiz the student can pre-fill a support ticket with the result, which is then routed to the appropriate counsellor category.
+
+---
+
+## Backend API
+
+The frontend communicates with the following endpoints (JWT bearer token after login):
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/auth/register` | Create a new user account |
+| `POST` | `/api/auth/login` | Log in, returns a JWT |
+| `POST` | `/api/tickets` | Submit a support ticket |
+| `POST` | `/api/diary` | Save a diary entry |
+
+The frontend falls back to `localStorage` for all other data (diary log, quiz history, images, pinning, deletion) in the current demo build.
+
+---
+
+## SDG Alignment
+
+| Goal | How MindEase contributes |
+|---|---|
+| **SDG 3 — Good Health and Well-being** | Early digital mental health screening, anonymous counselling, crisis SOS, and stress-management tools available 24/7. |
+| **SDG 10 — Reduced Inequalities** | Equal, stigma-free access for all students regardless of geography, background, or financial means. |
+
+---
+
+## Team
+
+| Name | Role |
+|---|---|
+| Srijan Diwan | Developer |
+| Vinayak Pandey | Developer |
+| Vibhu Varma | Developer |
+| Yash Prakash Singh | Developer |
+| Prof. Satyendra Singh | Project Supervisor |
+
+---
+
+*Built for Smart India Hackathon 2025 · Problem Statement SIH25092*
