@@ -1,4 +1,4 @@
-# 🌿 MindEase — Backend Setup Guide
+# 🌿 MindEase 
 
 This is the backend (server) for the MindEase project.  
 It is a **REST API** built with **Node.js + Express** and a **PostgreSQL** database.
